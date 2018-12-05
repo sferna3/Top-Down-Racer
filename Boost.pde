@@ -1,1 +1,3 @@
-
+class Boost extends TrackFeature{
+  
+}

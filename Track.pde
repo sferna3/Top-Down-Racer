@@ -14,8 +14,6 @@ class Track{
     trackWidth = 100;
     mapSize = 1000;
     outside = trackOutside;
-    inside = trackOutside;
-    inside.scale(.5);
     location = new PVector(0, 0);
     velocity = new PVector(0, 10);
     turnRate = 1;
@@ -23,33 +21,36 @@ class Track{
   }
   
   void render(){
-    outside.setFill(color(0, 0, 0));
-    inside.setFill(128);
-    shape(outside, location.x, location.y);
-    shape(inside, location.x, location.y);
     rectMode(CENTER);
+    outside.setFill(color(0, 0, 0));
+    shape(outside, location.x, location.y);
   }
   
-  void update(String direction){
-     handleTurns(direction);
-     render();
-     location.add(velocity);
+  void update(String direction){ 
+    rectMode(CENTER);
+    handleTurns(direction);
+    render();
+    line(0, 0, location.x, location.y);
+    location.add(velocity);
   }
-  //Handles turning depending on quadrant. this was hard and made me regret this choice
+  //Rotates track to give illusion of car turning.
+  //Rotating left is weird and I have absolutely no idea why
+  //Objects don't rotate around center of screen
   void handleTurns(String direction){
     if (direction == "Left"){
-      rotation = rotation + 10;
-      rotate(radians(rotation)); 
-      velocity.rotate(radians(rotation));
+      translate(width/2, height/2);
+      rotation = rotation + 5;
+      rotate(radians(rotation));
+      velocity.rotate(radians(-5));
     }
     if (direction == "Right"){
-      rotation = rotation + 10;
+      translate(width/2, height/2);
+      rotation = rotation - 5;
       rotate(radians(rotation));
-      velocity.rotate(radians(rotation));
+      velocity.rotate(radians(5));
     }
     else{
-      rotate(radians(rotation));
-      velocity.rotate(radians(rotation));
+    rotate(radians(rotation));
     }
   }
 }
