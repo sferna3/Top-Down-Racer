@@ -5,52 +5,64 @@ class Track{
   PShape inside;
   PVector location;
   PVector velocity;
-  float maxSpeed;
-  float turnRate;
   float rotation;
   
   
-  Track(PShape trackOutside){
+  Track(PShape trackOutside, PShape trackInside){
     trackWidth = 100;
     mapSize = 1000;
     outside = trackOutside;
+    inside = trackInside;
     location = new PVector(0, 0);
     velocity = new PVector(0, 10);
-    turnRate = 1;
     rotation = 0;
   }
   
   void render(){
-    rectMode(CENTER);
+    shapeMode(CENTER);
     outside.setFill(color(0, 0, 0));
+    inside.setFill(128);
+    shape(inside, location.x, location.y);
     shape(outside, location.x, location.y);
   }
   
   void update(String direction){ 
-    rectMode(CENTER);
-    handleTurns(direction);
-    render();
-    line(0, 0, location.x, location.y);
-    location.add(velocity);
+    //handleTurns(direction);
+    shape(outside, location.x, location.y);  
+    shape(inside, location.x, location.y);
   }
-  //Rotates track to give illusion of car turning.
-  //Rotating left is weird and I have absolutely no idea why
-  //Objects don't rotate around center of screen
-  void handleTurns(String direction){
-    if (direction == "Left"){
-      translate(width/2, height/2);
-      rotation = rotation + 5;
-      rotate(radians(rotation));
-      velocity.rotate(radians(-5));
-    }
-    if (direction == "Right"){
-      translate(width/2, height/2);
-      rotation = rotation - 5;
-      rotate(radians(rotation));
-      velocity.rotate(radians(5));
+  
+  boolean onTrack(Car player){
+    if (!inCenter(player) && (sq(player.getX() - location.x)/sq(500) + 
+    (sq(player.getY() - location.y)/sq(400)) <= 1)){
+      println("ontrack");
+      return true; 
     }
     else{
-    rotate(radians(rotation));
+      return false; 
     }
   }
+  //source: https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse
+  //I wanted to use variables for track size, but doing that kept giving me infinity as an output somehow
+  boolean inCenter(Car player){
+    if(sq(player.getX() - location.x)/(sq(325)) + 
+    sq(player.getY() - location.y)/(sq(250)) <= 1){
+      println("inCenter");
+      return true; 
+    }
+    else{
+      return false; 
+    }
+  }
+  
+  boolean offTrack(Car player){
+    if (!inCenter(player) && !onTrack(player)){ //<>//
+      println("offTrack");
+      return true; 
+    }
+    else{
+      return false; 
+    } 
+  }
+  
 }
